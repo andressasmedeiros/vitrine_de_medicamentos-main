@@ -38,6 +38,68 @@ export class VitrineMedicamentosSemana071738471707820 implements MigrationInterf
 
         await queryRunner.createTable(
             new Table({
+                name: 'roles',
+                columns: [
+                    {
+                        name: 'id',
+                        type: 'serial',
+                        isPrimary: true
+                    },
+                    {
+                        name: 'description',
+                        type: 'varchar',
+                        length: '150',
+                        isNullable: false,
+                        isUnique: true
+                    },
+                    {
+                        name: 'createdAt',
+                        type: 'timestamp',
+                        default: 'now()'
+                    },
+                    {
+                        name: 'updatedAt',
+                        type: 'timestamp',
+                        isNullable: true
+                    }
+                ]
+            }),
+            true
+        );
+
+        await queryRunner.createTable(
+            new Table({
+                name: 'permissions',
+                columns: [
+                    {
+                        name: 'id',
+                        type: 'serial',
+                        isPrimary: true
+                    },
+                    {
+                        name: 'description',
+                        type: 'varchar',
+                        length: '150',
+                        isNullable: false,
+                        isUnique: true
+                    },
+                    {
+                        name: 'createdAt',
+                        type: 'timestamp',
+                        default: 'now()'
+                    },
+                    {
+                        name: 'updatedAt',
+                        type: 'timestamp',
+                        isNullable: true
+                    }
+                ]
+            }),
+            true
+        );
+
+        await queryRunner.createTable(
+            new Table({
                 name: 'medicamentos',
                 columns: [
                     {
@@ -72,6 +134,44 @@ export class VitrineMedicamentosSemana071738471707820 implements MigrationInterf
             true
         );
 
+        await queryRunner.createTable(
+            new Table({
+                name: 'user_roles',
+                columns: [
+                    {
+                        name: 'userId',
+                        type: 'int',
+                        isPrimary: true
+                    },
+                    {
+                        name: 'roleId',
+                        type: 'int',
+                        isPrimary: true
+                    }
+                ]
+            }),
+            true
+        );
+
+        await queryRunner.createTable(
+            new Table({
+                name: 'permission_role',
+                columns: [
+                    {
+                        name: 'permissionId',
+                        type: 'int',
+                        isPrimary: true
+                    },
+                    {
+                        name: 'roleId',
+                        type: 'int',
+                        isPrimary: true
+                    }
+                ]
+            }),
+            true
+        );
+
         await queryRunner.createForeignKey(
             'medicamentos',
             new TableForeignKey({
@@ -84,12 +184,10 @@ export class VitrineMedicamentosSemana071738471707820 implements MigrationInterf
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        const table = await queryRunner.getTable('medicamentos');
-        const foreignKey = table?.foreignKeys.find(fk => fk.columnNames.includes('userId'));
-        if (foreignKey) {
-            await queryRunner.dropForeignKey('medicamentos', foreignKey);
-        }
-
+        await queryRunner.dropTable('permission_role');
+        await queryRunner.dropTable('user_roles');
+        await queryRunner.dropTable('permissions');
+        await queryRunner.dropTable('roles');
         await queryRunner.dropTable('medicamentos');
         await queryRunner.dropTable('users');
     }
