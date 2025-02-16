@@ -2,11 +2,12 @@ import { Router } from "express";
 import { AppDataSource } from "../database/data-source";
 import bcrypt from "bcrypt";
 import { User } from "../entity/User";
+import authenticate from "../middlewares/authenticate";
 
 const userRouter = Router();
 const userRepository = AppDataSource.getRepository(User);
 
-userRouter.post("/", async (req, res) => {
+userRouter.post("/", authenticate(["criar_usuario"]), async (req, res) => {
   try {
 
     const userBody = req.body;
@@ -34,7 +35,7 @@ userRouter.post("/", async (req, res) => {
   }
 });
 
-userRouter.get("/", async (req, res) => {
+userRouter.get("/", authenticate(["listar_usuario"]), async (req, res) => {
   try {
     const result = await userRepository.find();
 

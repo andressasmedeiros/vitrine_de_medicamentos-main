@@ -1,3 +1,6 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import { AppDataSource } from "./database/data-source"
 import express from "express"
 import cors from "cors"
